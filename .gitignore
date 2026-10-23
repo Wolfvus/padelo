@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+app
+bin/
+coverage.out
+.DS_Store

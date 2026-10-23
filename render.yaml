@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: padel-elo-webhook
+    plan: free
+    runtime: go
+    buildCommand: go build -tags netgo -ldflags '-s -w' -o app ./cmd/padelo
+    startCommand: ./app
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: PUBLIC_ORIGIN
+        sync: false
+      - key: WEB_ADMIN_PASSWORD
+        sync: false
+      - key: SESSION_TTL_HOURS
+        value: "12"
+      - key: TELEGRAM_WEBHOOK_SECRET
+        sync: false
+      - key: TELEGRAM_ALLOWED_CHAT_IDS
+        sync: false
+      - key: TRUST_CLOUDFLARE_IP
+        value: "false"

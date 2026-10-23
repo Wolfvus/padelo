@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-session-role="pending">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Padelo — Private ranking for the group">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#060A0C">
+  <link rel="manifest" href="/static/manifest.webmanifest">
+  <title>Padelo</title>
+  <link rel="preload" as="image" href="/static/padelo-background.png">
+  <link rel="stylesheet" href="/static/styles.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23060A0C'/><path d='M7 4h9.2c5.4 0 8.8 3.4 8.8 8.3s-3.4 8.3-8.8 8.3H13v7.4H7V4Zm6 5v6.6h2.8c2.1 0 3.3-1.2 3.3-3.3S17.9 9 15.8 9H13Z' fill='%23B7F05A'/></svg>">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <div id="app" class="app">
+    <div id="loading-screen" class="screen screen--loading" aria-hidden="false" aria-label="Loading Padelo">
+      <div class="loading-content">
+        <div class="loading-brand">
+          <div class="brand-mark" aria-hidden="true"><svg class="brand-mark__icon" viewBox="0 0 32 32"><use href="/static/icons.svg#brand"></use></svg></div>
+          <h1 class="brand-name">Padelo</h1>
+        </div>
+        <div class="loading-terminal" role="status" aria-live="polite">
+          <div class="loading-terminal__bar" aria-hidden="true"><i></i><i></i><i></i></div>
+          <div class="loading-terminal__line"><span class="loading-prompt">&gt;</span><span>Chiwawing</span><span class="loading-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span><span class="loading-cursor" aria-hidden="true"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="login-screen" class="screen screen--login" hidden aria-hidden="true">
+      <div class="login-wrap">
+        <header class="login-header">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true"><svg class="brand-mark__icon" viewBox="0 0 32 32"><use href="/static/icons.svg#brand"></use></svg></div>
+            <div class="login-brand-copy">
+              <h1 class="brand-name">Padelo</h1>
+              <p class="brand-subtitle">Admin access for match recording</p>
+            </div>
+          </div>
+        </header>
+
+        <div class="login-card">
+          <form id="login-form" class="login-form" novalidate>
+            <div class="field">
+              <label for="password" class="field__label">Recording password</label>
+              <div class="field__control">
+                <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter shared password" class="input">
+                <button type="button" id="toggle-password" class="icon-btn icon-btn--ghost" aria-label="Show password" aria-pressed="false">
+                  <svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#eye"></use></svg>
+                </button>
+              </div>
+            </div>
+            <p id="login-error" class="field__error" role="alert" aria-live="assertive" hidden></p>
+            <button type="submit" id="login-btn" class="btn btn--primary">Unlock recording</button>
+            <button type="button" id="login-cancel" class="btn btn--ghost">Back to ranking</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-shell" class="shell" hidden aria-hidden="true">
+      <header class="shell-header">
+        <div class="shell-header__left">
+          <div class="brand brand--small">
+            <div class="brand-mark brand-mark--small" aria-hidden="true"><svg class="brand-mark__icon" viewBox="0 0 32 32"><use href="/static/icons.svg#brand"></use></svg></div>
+            <div class="header-brand-copy">
+              <span class="brand-name brand-name--small">Padelo</span>
+              <span id="header-status" class="header-status">Loading ranking…</span>
+            </div>
+          </div>
+        </div>
+        <div class="shell-header__right">
+          <button id="settings-btn" class="icon-btn header-menu-btn" aria-label="Open menu" aria-haspopup="menu" aria-expanded="false" aria-controls="settings-menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#settings"></use></svg>
+          </button>
+          <div id="settings-menu" class="menu" role="menu" hidden>
+            <button role="menuitem" id="manage-next-match" class="menu__item admin-only">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Next match</span>
+            </button>
+            <button role="menuitem" id="refresh-data" class="menu__item">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#refresh"></use></svg>
+              <span>Refresh data</span>
+            </button>
+            <button role="menuitem" id="logout-btn" class="menu__item menu__item--danger">
+              <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#logout"></use></svg>
+              <span>Log out</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main id="main" class="main">
+        <section id="ranking-view" class="view" aria-labelledby="ranking-title">
+          <div class="view-header">
+            <h2 id="ranking-title" class="view-title">Ranking</h2>
+            <div class="view-header__actions">
+              <span id="ranking-updated" class="text-muted text-xs"></span>
+              <button id="ranking-refresh" class="icon-btn icon-btn--small" aria-label="Refresh ranking">
+                <svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#refresh"></use></svg>
+              </button>
+            </div>
+          </div>
+          <div id="ranking-status" class="status" aria-live="polite"></div>
+          <article id="next-match-card" class="next-match-card" hidden aria-labelledby="next-match-title">
+            <span class="section-kicker">Upcoming</span>
+            <h3 id="next-match-title" class="next-match-card__title">Next match</h3>
+            <div class="next-match-card__details">
+              <div class="next-match-detail">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span><small>Date</small><strong id="next-match-date"></strong></span>
+              </div>
+              <div class="next-match-detail">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span><small>Time</small><strong id="next-match-time"></strong></span>
+              </div>
+              <div class="next-match-detail next-match-detail--location">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6-5.4 6-11a6 6 0 1 0-12 0c0 5.6 6 11 6 11Z" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+                <span><small>Location</small><strong id="next-match-location"></strong></span>
+              </div>
+            </div>
+          </article>
+          <div id="ranking-list" class="ranking-list" role="list"></div>
+          <div id="ranking-skeleton" class="skeleton-list" hidden aria-hidden="true">
+            <div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div><div class="skeleton-row"></div>
+          </div>
+          <div id="ranking-empty" class="empty" hidden>
+            <p class="empty__title">No players yet</p>
+            <p class="empty__text">Add players to see the ranking.</p>
+          </div>
+          <div id="ranking-error" class="error" hidden>
+            <p class="error__text">Failed to load ranking.</p>
+            <button class="btn btn--secondary btn--small" data-retry="ranking">Retry</button>
+          </div>
+        </section>
+
+        <section id="record-view" class="view" hidden aria-labelledby="record-title">
+          <div class="view-header view-header--record">
+            <div>
+              <h2 id="record-title" class="view-title">New match</h2>
+              <p class="view-subtitle">Set the teams, final score, then review.</p>
+            </div>
+            <div class="record-tools">
+              <button id="manage-players-btn" class="btn btn--secondary btn--small" type="button">Players</button>
+              <button id="record-reset" class="btn btn--ghost btn--small record-reset" hidden>
+                <svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#reset"></use></svg>
+                <span>Reset</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="match-builder">
+            <div class="team-card team-card--a">
+              <div class="team-card__header">
+                <span class="team-badge">A</span>
+                <div>
+                  <p class="team-label">TEAM A</p>
+                  <p class="team-hint">Choose two players</p>
+                </div>
+              </div>
+              <div class="team-players">
+                <button class="player-select" data-team="A" data-slot="0" aria-label="Select Player 1 for Team A">
+                  <span class="player-select__number">1</span>
+                  <span class="player-select__body"><span class="player-select__label">Player 1</span><span class="player-select__value" data-value="A0">Select player</span></span>
+                  <svg class="player-select__chevron" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#chevron-right"></use></svg>
+                </button>
+                <button class="player-select" data-team="A" data-slot="1" aria-label="Select Player 2 for Team A">
+                  <span class="player-select__number">2</span>
+                  <span class="player-select__body"><span class="player-select__label">Player 2</span><span class="player-select__value" data-value="A1">Select player</span></span>
+                  <svg class="player-select__chevron" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#chevron-right"></use></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="match-vs" aria-hidden="true"><span></span><strong>VS</strong><span></span></div>
+
+            <div class="team-card team-card--b">
+              <div class="team-card__header">
+                <span class="team-badge">B</span>
+                <div>
+                  <p class="team-label">TEAM B</p>
+                  <p class="team-hint">Choose two players</p>
+                </div>
+              </div>
+              <div class="team-players">
+                <button class="player-select" data-team="B" data-slot="0" aria-label="Select Player 1 for Team B">
+                  <span class="player-select__number">1</span>
+                  <span class="player-select__body"><span class="player-select__label">Player 1</span><span class="player-select__value" data-value="B0">Select player</span></span>
+                  <svg class="player-select__chevron" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#chevron-right"></use></svg>
+                </button>
+                <button class="player-select" data-team="B" data-slot="1" aria-label="Select Player 2 for Team B">
+                  <span class="player-select__number">2</span>
+                  <span class="player-select__body"><span class="player-select__label">Player 2</span><span class="player-select__value" data-value="B1">Select player</span></span>
+                  <svg class="player-select__chevron" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#chevron-right"></use></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="scoreboard">
+            <div class="scoreboard__header">
+              <div><span class="section-kicker">FINAL SCORE</span><h3 class="scoreboard__title">Set result</h3></div>
+              <p id="winner-preview" class="winner-preview" aria-live="polite"></p>
+            </div>
+            <div class="scores">
+              <div class="score-control" data-score="A">
+                <span class="score-label">Team A</span>
+                <div class="score-row">
+                  <button class="score-btn" data-action="dec" data-team="A" aria-label="Decrease Team A score"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#minus"></use></svg></button>
+                  <span class="score-value" id="score-a">0</span>
+                  <button class="score-btn" data-action="inc" data-team="A" aria-label="Increase Team A score"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#plus"></use></svg></button>
+                </div>
+              </div>
+              <span class="score-divider">:</span>
+              <div class="score-control" data-score="B">
+                <span class="score-label">Team B</span>
+                <div class="score-row">
+                  <button class="score-btn" data-action="dec" data-team="B" aria-label="Decrease Team B score"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#minus"></use></svg></button>
+                  <span class="score-value" id="score-b">0</span>
+                  <button class="score-btn" data-action="inc" data-team="B" aria-label="Increase Team B score"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#plus"></use></svg></button>
+                </div>
+              </div>
+            </div>
+            <label class="sets-field" for="match-sets">Multiple matches <span>optional · comma separated</span><input id="match-sets" class="input" inputmode="text" placeholder="6-2, 2-6"></label>
+          </div>
+
+          <div class="record-submit">
+            <button id="record-btn" class="btn btn--primary btn--large" title="Record match" disabled>Review match</button>
+            <p id="record-error" class="field__error" role="alert" aria-live="assertive" hidden></p>
+          </div>
+
+          <div id="result-panel" class="result-panel" hidden>
+            <h3 class="result-title">Match recorded</h3>
+            <div id="result-summary" class="result-summary"></div>
+            <div id="result-changes" class="result-changes"></div>
+            <div class="result-actions">
+              <button id="view-ranking-btn" class="btn btn--secondary">View ranking</button>
+              <button id="record-another-btn" class="btn btn--primary">Record another</button>
+              <button id="share-result-btn" class="btn btn--secondary">Share result</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="history-view" class="view" hidden aria-labelledby="history-title">
+          <div class="view-header">
+            <h2 id="history-title" class="view-title">History</h2>
+            <button id="history-refresh" class="icon-btn icon-btn--small" aria-label="Refresh history"><svg width="19" height="19" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#refresh"></use></svg></button>
+          </div>
+          <div id="history-status" class="status" aria-live="polite"></div>
+          <div id="history-list" class="history-list"></div>
+          <div id="history-skeleton" class="skeleton-list" hidden aria-hidden="true"><div class="skeleton-card"></div><div class="skeleton-card"></div></div>
+          <div id="history-empty" class="empty" hidden><p class="empty__title">No matches yet</p><p class="empty__text">Recorded matches will appear here.</p></div>
+          <div id="history-error" class="error" hidden><p class="error__text">Failed to load history.</p><button class="btn btn--secondary btn--small" data-retry="history">Retry</button></div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="Primary">
+        <button class="nav-item is-active" data-view="ranking" aria-current="page"><span class="nav-item__icon-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#ranking"></use></svg></span><span class="nav-item__label">Ranking</span></button>
+        <button class="nav-item" data-view="record"><span class="nav-item__icon-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#record"></use></svg></span><span class="nav-item__label">Record</span></button>
+        <button class="nav-item" data-view="history"><span class="nav-item__icon-wrap"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#history"></use></svg></span><span class="nav-item__label">History</span></button>
+      </nav>
+    </div>
+  </div>
+
+  <div id="player-sheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+    <div class="sheet__backdrop" data-close="sheet"></div>
+    <div class="sheet__panel">
+      <div class="sheet__header">
+        <div><span class="section-kicker">PLAYER</span><h3 id="sheet-title" class="sheet__title">Select player</h3><p id="sheet-context" class="sheet-context">Choose a player</p></div>
+        <button class="icon-btn" data-close="sheet" aria-label="Close"><svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true"><use href="/static/icons.svg#close"></use></svg></button>
+      </div>
+      <div class="player-search">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <input id="player-search" type="search" inputmode="search" autocomplete="off" placeholder="Search players" aria-label="Search players">
+      </div>
+      <div id="sheet-list" class="sheet__list" role="listbox"></div>
+      <p class="player-search-empty" hidden>No matching players</p>
+    </div>
+  </div>
+
+  <div id="confirm-sheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="sheet__backdrop" data-close="confirm"></div>
+    <div class="sheet__panel sheet__panel--confirm">
+      <span class="section-kicker">REVIEW</span>
+      <h3 id="confirm-title" class="sheet__title">Review match</h3>
+      <div id="confirm-content" class="confirm-content"></div>
+      <div class="sheet__actions"><button class="btn btn--secondary" data-close="confirm">Cancel</button><button id="confirm-btn" class="btn btn--primary">Confirm and record</button></div>
+    </div>
+  </div>
+
+  <div id="rollback-sheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="rollback-title">
+    <div class="sheet__backdrop" data-close="rollback"></div>
+    <div class="sheet__panel sheet__panel--confirm">
+      <span class="section-kicker">ROLLBACK</span>
+      <h3 id="rollback-title" class="sheet__title">Undo latest match?</h3>
+      <div id="rollback-content" class="confirm-content"></div>
+      <p class="text-muted text-sm">This will restore the previous Elo values.</p>
+      <div class="sheet__actions"><button class="btn btn--secondary" data-close="rollback">Cancel</button><button id="rollback-confirm-btn" class="btn btn--danger">Undo match</button></div>
+    </div>
+  </div>
+
+  <div id="players-sheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="players-title">
+    <div class="sheet__backdrop" data-close="players"></div>
+    <div class="sheet__panel sheet__panel--players">
+      <div class="sheet__header">
+        <div><span class="section-kicker">ADMIN</span><h3 id="players-title" class="sheet__title">Manage players</h3></div>
+        <button class="icon-btn icon-btn--small" type="button" data-close="players" aria-label="Close player management">×</button>
+      </div>
+      <form id="add-player-form" class="player-manager__form">
+        <input id="add-player-name" class="input" name="name" type="text" maxlength="80" autocomplete="off" placeholder="Player name" required>
+        <input id="add-player-elo" class="input player-manager__elo-input" name="elo" type="number" min="0" step="1" inputmode="decimal" placeholder="1200">
+        <button class="btn btn--primary" type="submit">Add player</button>
+      </form>
+      <p class="player-manager__hint">New players start at 1200 Elo unless you set a value.</p>
+      <div id="player-management-list" class="player-manager__list" aria-live="polite"></div>
+    </div>
+  </div>
+  <div id="next-match-sheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="next-match-sheet-title">
+    <div class="sheet__backdrop" data-close="next-match"></div>
+    <div class="sheet__panel sheet__panel--next-match">
+      <div class="sheet__header">
+        <div><span class="section-kicker">ADMIN</span><h3 id="next-match-sheet-title" class="sheet__title">Schedule next match</h3></div>
+        <button class="icon-btn icon-btn--small" type="button" data-close="next-match" aria-label="Close next match editor">×</button>
+      </div>
+      <form id="next-match-form" class="next-match-form">
+        <label class="next-match-field" for="next-match-input-date"><span>Date</span><input id="next-match-input-date" class="input" name="date" type="date" required></label>
+        <label class="next-match-field" for="next-match-input-time"><span>Time</span><input id="next-match-input-time" class="input" name="time" type="time" required></label>
+        <label class="next-match-field next-match-field--location" for="next-match-input-location"><span>Location</span><input id="next-match-input-location" class="input" name="location" type="text" maxlength="160" autocomplete="off" placeholder="Club and court" required></label>
+        <p id="next-match-form-error" class="field__error" role="alert" aria-live="assertive" hidden></p>
+        <div class="sheet__actions"><button class="btn btn--secondary" type="button" data-close="next-match">Cancel</button><button id="next-match-save" class="btn btn--primary" type="submit">Save match</button></div>
+        <button id="next-match-clear" class="btn btn--ghost next-match-clear" type="button" hidden>Clear schedule</button>
+      </form>
+    </div>
+  </div>
+  <div id="profile-sheet" class="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="profile-title">
+    <div class="sheet__backdrop" data-close="profile"></div>
+    <div class="sheet__panel"><div class="sheet__header"><h3 id="profile-title" class="sheet__title">Player profile</h3><button class="icon-btn icon-btn--small" type="button" data-close="profile" aria-label="Close profile">×</button></div><div id="profile-content"></div></div>
+  </div>
+
+  <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>
