@@ -1,5 +1,6 @@
-const CACHE = 'padelo-public-v1';
-const ASSETS = ['/', '/static/styles.css', '/static/app.js', '/static/api.js', '/static/state.js', '/static/ui-enhancements.js', '/static/icons.svg', '/static/manifest.webmanifest'];
+const CACHE = 'padelo-public-v2';
+const ASSETS = ['/', '/static/styles.css', '/static/app.js', '/static/api.js', '/static/state.js', '/static/ui-enhancements.js', '/static/icons.svg', '/static/manifest.webmanifest',
+  '/static/tournament.html', '/static/tournament.css', '/static/tournament.js'];
 self.addEventListener('install', event => event.waitUntil(
   caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
 ));
@@ -18,7 +19,7 @@ self.addEventListener('fetch', event => {
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
-    const cacheKey = event.request.mode === 'navigate' ? '/' : event.request;
+    const cacheKey = event.request.mode === 'navigate' ? url.pathname : event.request;
     const cached = await cache.match(cacheKey);
     const refresh = fetch(event.request).then(response => {
       if (response.ok) cache.put(cacheKey, response.clone());

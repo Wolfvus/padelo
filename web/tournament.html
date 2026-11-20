@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#060a0c">
+  <meta name="color-scheme" content="dark">
+  <title>6 Loco · Six-player doubles · Padelo</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./tournament.css">
+  <script defer src="./tournament.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#draw" data-text="skip">Skip to draw</a>
+  <main class="preview">
+    <header class="topbar">
+      <a href="/" class="back"><span aria-hidden="true">←</span> Padelo</a>
+      <label class="language"><span data-text="language">Language</span>
+        <select id="language"><option lang="en" value="en">English</option><option lang="es" value="es">Español</option></select>
+      </label>
+    </header>
+    <section class="intro">
+      <p class="eyebrow" data-text="format">Proposed tournament format</p>
+      <h1 data-text="title">6 Loco · Six-player doubles</h1>
+      <p data-text="description">Six rounds on one court. Each player plays four matches with four different partners and rests twice.</p>
+    </section>
+    <noscript>Enable JavaScript to view the draw. Activa JavaScript para ver las rondas.</noscript>
+    <details id="roster">
+      <summary data-text="edit">Edit player names</summary>
+      <form id="names" novalidate autocomplete="off">
+        <div id="fields"></div>
+        <p id="error" role="alert"></p>
+        <div class="actions">
+          <button type="submit" class="primary" data-text="apply">Update draw</button>
+          <button type="button" id="sample" data-text="sample">Use sample names</button>
+        </div>
+      </form>
+    </details>
+    <section id="draw" tabindex="-1" aria-labelledby="draw-title">
+      <div class="draw-header">
+        <h2 id="draw-title" data-text="draw">Round schedule</h2>
+        <button type="button" id="copy" data-text="copy">Copy draw</button>
+      </div>
+      <div id="status" role="status"></div>
+      <label id="manual" hidden><span data-text="manual">Select and copy the draw below.</span>
+        <textarea id="copy-text" rows="6" readonly></textarea>
+      </label>
+      <ol id="rounds"></ol>
+    </section>
+  </main>
+</body>
+</html>

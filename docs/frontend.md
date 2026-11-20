@@ -22,6 +22,10 @@ Ranking and history are public. Selecting a player opens a public profile. Recor
 
 Client-side visibility is not authorization. Every write is independently checked by the Go handler.
 
+## 6 Loco tournament preview
+
+Open **6 Loco tournament preview** in the ranking menu, or visit `/static/tournament.html`. You can also open `web/tournament.html` directly from a local checkout. This optional planner offers one proposed rotation on a single court. Each of six players plays four matches with four different partners and rests twice. It opens with fictional names. Edit the roster, switch between English and Spanish, or copy the rounds for the group. Names stay in page memory and reset on reload. The page runs independently of the API, sessions, rankings, and match recording.
+
 ## State and data flow
 
 On load, the client checks session status, resolves the authenticated role, and loads rankings, recent matches, and the next match. `state.js` holds the current role, data, selected teams, scores, active view, loading flags, and errors. Mutations call the API first and then refresh affected public state.
